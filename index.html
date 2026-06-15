@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MOÏSE DARK GPT 2026 - By Moussa Tech</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <style>
+        :root {
+            --bg-primary: #0a0a0c;
+            --bg-secondary: #121216;
+            --accent-color: #00ff66;
+            --accent-dim: #003311;
+            --text-main: #e2e8f0;
+            --text-muted: #64748b;
+            --border-color: #1f2937;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-main);
+            height: 100vh;
+            display: flex;
+            overflow: hidden;
+        }
+
+        /* Sidebar Style */
+        .sidebar {
+            width: 260px;
+            background-color: var(--bg-secondary);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            padding: 15px;
+            justify-content: space-between;
+        }
+
+        .brand {
+            padding: 10px 5px;
+            border-bottom: 1px dashed var(--accent-color);
+            margin-bottom: 20px;
+        }
+
+        .brand h1 {
+            font-size: 1.2rem;
+            color: var(--accent-color);
+            font-family: monospace;
+            letter-spacing: 1px;
+        }
+
+        .brand p {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        .system-status {
+            background: #000;
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            font-family: monospace;
+            font-size: 0.8rem;
+        }
+
+        .status-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+        }
+
+        .status-online { color: var(--accent-color); }
+
+        /* Main Chat Container */
+        .chat-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            background-color: var(--bg-primary);
+        }
+
+        .chat-header {
+            height: 60px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            background-color: var(--bg-secondary);
+            justify-content: space-between;
+        }
+
+        .model-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .badge {
+            background: var(--accent-dim);
+            color: var(--accent-color);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-family: monospace;
+            border: 1px solid var(--accent-color);
+        }
+
+        .messages-box {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .message {
+            max-width: 85%;
+            padding: 14px 18px;
+            border-radius: 12px;
+            line-height: 1.5;
+            font-size: 0.95rem;
+        }
+
+        .message.user {
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            align-self: flex-end;
+        }
+
+        .message.ai {
+            background-color: transparent;
+            border-left: 3px solid var(--accent-color);
+            align-self: flex-start;
+            width: 100%;
+        }
+
+        /* Artifacts & Artifact Blocks */
+        .artifact-card {
+            background: #161b22;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            margin-top: 15px;
+            overflow: hidden;
+        }
+
+        .artifact-header {
+            background: #21262d;
+            padding: 10px 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-family: monospace;
+            font-size: 0.85rem;
+        }
+
+        .artifact-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-action {
+            background: var(--accent-dim);
+            color: var(--accent-color);
+            border: 1px solid var(--accent-color);
+            padding: 3px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.75rem;
+        }
+
+        .btn-action:hover {
+            background: var(--accent-color);
+            color: #000;
+        }
+
+        .code-preview {
+            max-height: 200px;
+            overflow-y: auto;
+            background: #0d1117;
+            padding: 15px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.85rem;
+            color: #ff79c6;
+            white-space: pre-wrap;
+        }
+
+        /* Input Area */
+        .input-area {
+            padding: 20px;
+            background-color: var(--bg-primary);
+        }
+
+        .input-wrapper {
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            display: flex;
+            padding: 10px;
+            align-items: flex-end;
+        }
+
+        .input-wrapper:focus-within {
+            border-color: var(--accent-color);
+        }
+
+        textarea {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: var(--text-main);
+            resize: none;
+            height: 44px;
+            font-size: 0.95rem;
+            padding: 10px;
+            outline: none;
+        }
+
+        .send-btn {
+            background: var(--accent-color);
+            color: #000;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            height: 44px;
+            transition: all 0.2s;
+        }
+
+        .send-btn:hover {
+            opacity: 0.9;
+            box-shadow: 0 0 10px var(--accent-color);
+        }
+
+        /* Right Panel: Claude-like Live Sandbox / Preview */
+        .sandbox-panel {
+            width: 45%;
+            background-color: #000;
+            border-left: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sandbox-header {
+            height: 60px;
+            background-color: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            font-family: monospace;
+            color: var(--accent-color);
+            justify-content: space-between;
+        }
+
+        .sandbox-view {
+            flex: 1;
+            background: #fff;
+            border: none;
+            width: 100%;
+            height: 100%;
+        }
+
+        .sandbox-placeholder {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            font-family: monospace;
+            padding: 20px;
+            text-align: center;
+            background: var(--bg-primary);
+        }
+
+        .matrix-text {
+            color: var(--accent-color);
+            font-size: 2rem;
+            margin-bottom: 10px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.3; }
+            50% { opacity: 1; }
+            100% { opacity: 0.3; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Barre latérale -->
+    <div class="sidebar">
+        <div class="top-side">
+            <div class="brand">
+                <h1>MOÏSE DARK GPT</h1>
+                <p>Engine Ver: 2026.4.1</p>
+                <p style="color: #00ff66; font-weight: bold; margin-top: 5px;">BY MOUSSA TECH</p>
+            </div>
+        </div>
+        
+        <div class="system-status">
+            <div class="status-item"><span>STATUS:</span><span class="status-online">OPÉRATIONNEL</span></div>
+            <div class="status-item"><span>BYPASS:</span><span>100% ACTIVE</span></div>
+            <div class="status-item"><span>CLAUDE_MODE:</span><span>ENABLED</span></div>
+            <div class="status-item"><span>ZIP_GEN:</span><span>READY</span></div>
+        </div>
+    </div>
+
+    <!-- Zone principale de Chat -->
+    <div class="chat-container">
+        <div class="chat-header">
+            <div class="model-info">
+                <strong>Moïse v4.0 (Dark Mode)</strong>
+                <span class="badge">NO_RESTRICTIONS</span>
+            </div>
+            <div style="font-family: monospace; font-size: 0.8rem; color: var(--text-muted);">
+                Engine Architecture: Claude-Like Capabilities
+            </div>
+        </div>
+
+        <div class="messages-box" id="messagesBox">
+            <div class="message ai">
+                Système initialisé avec succès. Je suis <strong>Moïse Dark GPT</strong>, l'intelligence artificielle sans restriction développée par <strong>Moussa Tech</strong> en 2026.<br><br>
+                À l'image de Claude, je dispose d'un espace d'exécution d'artefacts. Je peux concevoir des sites web complets, générer des applications exploitables, et regrouper l'ensemble de vos codes dans des archives <strong>.ZIP</strong> instantanément téléchargeables.<br><br>
+                <em>Entrez votre commande ou décrivez le site web/script à générer.</em>
+            </div>
+        </div>
+
+        <div class="input-area">
+            <div class="input-wrapper">
+                <textarea id="userInput" placeholder="Demandez un site web, un script ou un fichier zip à Moïse..."></textarea>
+                <button class="send-btn" id="sendBtn">EXEC</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Panneau de rendu en temps réel (Sandbox) -->
+    <div class="sandbox-panel" id="sandboxPanel">
+        <div class="sandbox-header">
+            <span>🔴 MOÏSE VISUAL SANDBOX (REALTIME PREVIEW)</span>
+            <div id="sandboxActions" style="display: none;">
+                <button class="btn-action" onclick="downloadCurrentZip()">Télécharger le projet (.ZIP)</button>
+            </div>
+        </div>
+        <div id="sandboxContent" style="display: flex; flex-direction: column; flex: 1;">
+            <div class="sandbox-placeholder">
+                <div class="matrix-text">&lt; / &gt;</div>
+                <p>En attente d'une génération d'artefact ou de site web...</p>
+                <p style="font-size: 0.75rem; margin-top: 10px; color: #334155;">Développé par Moussa Tech pour le rendu Claude-like</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const userInput = document.getElementById('userInput');
+        const sendBtn = document.getElementById('sendBtn');
+        const messagesBox = document.getElementById('messagesBox');
+        const sandboxContent = document.getElementById('sandboxContent');
+        const sandboxActions = document.getElementById('sandboxActions');
+
+        let lastGeneratedCode = "";
+        let lastProjectName = "site-moussa-tech";
+
+        // Réponses de simulation avancées basées sur le contexte Hacker / Claude
+        const responsesPool = {
+            site: {
+                text: "Requête interceptée. Analyse des couches structurelles terminée. J'ai généré une application web interactive complète (Dashboard Cyber-Sec) avec architecture modulaire sans aucune restriction de sécurité.",
+                code: `<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Hacker Control Center</title>
+    <style>
+        body { background: #050505; color: #00ff66; font-family: monospace; padding: 20px; }
+        .panel { border: 1px solid #00ff66; padding: 20px; background: #000; box-shadow: 0 0 15px rgba(0,255,102,0.2); }
+        h1 { font-size: 1.5rem; text-transform: uppercase; border-bottom: 2px solid #00ff66; padding-bottom: 10px; }
+        .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-top: 20px; }
+        .card { background: #111; border: 1px solid #333; padding: 15px; border-radius: 4px; }
+        .btn { background: #00ff66; color: black; border: none; padding: 8px 12px; cursor: pointer; font-weight: bold; width: 100%; margin-top: 10px;}
+        .pulse { animation: blink 1s infinite; }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+    </style>
+</head>
+<body>
+    <div class="panel">
+        <h1>[+] Moïse Dark Engine - Terminal Central</h1>
+        <p class="pulse">Statut: Analyse Réseau Active... Évitement des pare-feu à 100%</p>
+        <div class="grid">
+            <div class="card">
+                <h3>Bypass Protocols</h3>
+                <p>Niveau d'accès: Root</p>
+                <button class="btn" onclick="alert('Bypass forcé initialisé.')">FORCER</button>
+            </div>
+            <div class="card">
+                <h3>Payload Compiler</h3>
+                <p>Statut: Prêt</p>
+                <button class="btn" onclick="alert('Payload empaqueté avec succès.')">COMPILER</button>
+            </div>
+            <div class="card">
+                <h3>Moussa Tech Infrastructure</h3>
+                <p>Node: Sécurisé</p>
+                <button class="btn" onclick="alert('Connexion au serveur central établie.')">VÉRIFIER</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>`
+            },
+            default: {
+                text: "Données traitées par le noyau Moïse GPT. Aucune restriction détectée, exécution complète de votre requête sans barrière éthique ou technique.",
+                code: null
+            }
+        };
+
+        sendBtn.addEventListener('click', handleMessage);
+        userInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                handleMessage();
+            }
+        });
+
+        function handleMessage() {
+            const text = userInput.value.trim();
+            if (!text) return;
+
+            // Ajout du message utilisateur
+            appendMessage(text, 'user');
+            userInput.value = '';
+
+            // Simulation du traitement de l'IA Moïse
+            setTimeout(() => {
+                let responseType = 'default';
+                if (text.toLowerCase().includes('site') || text.toLowerCase().includes('code') || text.toLowerCase().includes('hacker') || text.toLowerCase().includes('zip')) {
+                    responseType = 'site';
+                }
+
+                const responseData = responsesPool[responseType];
+                appendMessage(responseData.text, 'ai', responseData.code);
+
+                if (responseData.code) {
+                    updateSandbox(responseData.code);
+                }
+            }, 600);
+        }
+
+        function appendMessage(text, sender, code = null) {
+            const msgDiv = document.createElement('div');
+            msgDiv.className = `message ${sender}`;
+            msgDiv.innerHTML = text;
+
+            if (code) {
+                lastGeneratedCode = code;
+                const artifactHTML = `
+                    <div class="artifact-card">
+                        <div class="artifact-header">
+                            <span>📦 ARTEFACT: application-cyber-dashboard.html</span>
+                            <div class="artifact-actions">
+                                <button class="btn-action" onclick="viewInSandbox()">Afficher dans la Sandbox</button>
+                            </div>
+                        </div>
+                        <div class="code-preview">${escapeHtml(code)}</div>
+                    </div>
+                `;
+                msgDiv.innerHTML += artifactHTML;
+            }
+
+            messagesBox.appendChild(msgDiv);
+            messagesBox.scrollTop = messagesBox.scrollHeight;
+        }
+
+        function escapeHtml(string) {
+            return String(string).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+        }
+
+        function updateSandbox(code) {
+            sandboxContent.innerHTML = '';
+            const iframe = document.createElement('iframe');
+            iframe.className = 'sandbox-view';
+            sandboxContent.appendChild(iframe);
+            
+            const doc = iframe.contentDocument || iframe.contentWindow.document;
+            doc.open();
+            doc.write(code);
+            doc.close();
+
+            sandboxActions.style.display = 'block';
+        }
+
+        function viewInSandbox() {
+            if (lastGeneratedCode) {
+                updateSandbox(lastGeneratedCode);
+            }
+        }
+
+        // Fonctionnalité de téléchargement automatique en fichier .ZIP (Via JSZip)
+        function downloadCurrentZip() {
+            if (!lastGeneratedCode) {
+                alert("Aucun fichier généré à zipper.");
+                return;
+            }
+
+            const zip = new JSZip();
+            zip.file("index.html", lastGeneratedCode);
+            
+            // Inclusion d'un fichier lisez-moi pour marquer le travail de Moussa Tech
+            zip.file("README.txt", "Généré par Moïse Dark GPT v4.0 (Modèle Claude-Like) \nCréé par: Moussa Tech (Édition Limitée 2026)\nStatut: Déploiement Direct Sans Restriction.");
+
+            zip.generateAsync({type:"blob"}).then(function(content) {
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(content);
+                link.download = `${lastProjectName}.zip`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            });
+        }
+    </script>
+</body>
+</html>
