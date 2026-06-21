@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DARK IA WEB | MOISETECH</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- ===== Sidebar : historique des conversations ===== -->
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-header">
+      <h2>💬 Conversations</h2>
+      <button id="newChatBtn" class="btn-icon" title="Nouvelle conversation">＋</button>
+    </div>
+    <div id="historyList" class="history-list"></div>
+
+    <!-- Sélecteur de thème -->
+    <div class="theme-switcher" id="themeSwitcher">
+      <div class="theme-dot" data-theme-option="violet" title="Dark Violet"></div>
+      <div class="theme-dot" data-theme-option="bleu" title="Dark Bleu"></div>
+      <div class="theme-dot" data-theme-option="vert" title="Dark Vert"></div>
+      <div class="theme-dot" data-theme-option="light" title="Light"></div>
+    </div>
+
+    <div class="sidebar-footer">
+      <small>Powered by <strong>MOISETECH</strong></small>
+      <small class="signature">Le jeune Sénégalais 🇸🇳</small>
+    </div>
+  </aside>
+
+  <!-- ===== Zone principale ===== -->
+  <div class="main">
+
+    <header class="topbar">
+      <button id="toggleSidebar" class="btn-icon" title="Menu">☰</button>
+      <div class="brand">
+        <span class="brand-dark">DARK</span><span class="brand-ia">IA</span><span class="brand-web">WEB</span>
+      </div>
+      <div class="status-dot" id="statusDot" title="Statut serveur"></div>
+    </header>
+
+    <main id="chatWindow" class="chat-window">
+      <div class="welcome">
+        <h1>🌑 DARK IA WEB</h1>
+        <p>Pose ta question, envoie une image ou un fichier — l'IA s'occupe du reste.</p>
+        <p class="welcome-tag">Powered by MOISETECH — Le jeune Sénégalais 🇸🇳</p>
+      </div>
+    </main>
+
+    <form id="chatForm" class="chat-form">
+      <div id="filePreview" class="file-preview hidden"></div>
+      <div class="input-row">
+        <button type="button" id="attachBtn" class="btn-icon" title="Joindre un fichier">📎</button>
+        <input type="file" id="fileInput" accept="image/*,.pdf,.txt" hidden>
+        <textarea id="messageInput" placeholder="Écris ton message ici..." rows="1"></textarea>
+        <button type="submit" id="sendBtn" class="btn-send" title="Envoyer">➤</button>
+      </div>
+    </form>
+
+  </div>
+
+<script src="app.js"></script>
+</body>
+</html>
